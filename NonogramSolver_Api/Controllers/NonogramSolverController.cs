@@ -9,11 +9,21 @@ namespace NonogramSolver_Api.Controllers
     public class NonogramSolverController : Controller
     {
         [HttpPost]
-        public async Task<ActionResult<string>> SolveNonogram([FromBody] string input)
+        public async Task<ActionResult<string>> SolveNonogram([FromBody] NonogramRequest input)
         {
             NonogramSolver solver = new NonogramSolver();
-            string response = solver.ConvertBoard();
-            return response;
+            NonogramResponse response = new NonogramResponse();
+            response.Solution = solver.SolveNonogram(input.RowClues, input.ColClues);
+            if (response.Solution == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                string solution = JsonSerializer.Serialize(response);
+                return solution;
+            }
+            
         }
     }
 }
